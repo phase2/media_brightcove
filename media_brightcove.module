@@ -1,0 +1,70 @@
+<?php
+
+/**
+ * @file media_brightcove/media_brightcove.module
+ *
+ * Media: Brightcove provides a stream wrapper and formatters for videos provided
+ * by Brightcove.
+ *
+ * This was base on the media_youtube module
+ *
+ * @TODO:
+ */
+
+// Hooks and callbacks for integrating with File Entity module for display.
+include_once('includes/media_brightcove.formatters.inc');
+
+/**
+ * Implements hook_media_internet_providers().
+ */
+function media_brightcove_media_internet_providers() {
+  $path = drupal_get_path('module', 'media_brightcove');
+  return array(
+    'MediaInternetBrightcoveHandler' => array(
+      'title' => 'brightcove',
+      //'image' => $path . '/images/stream-brightcove.png'
+      'image' => 'http://img.brightcove.com/logo-corporate-new.png'
+    ),
+  );
+}
+
+/**
+ * Implements hook_stream_wrappers().
+ */
+function media_brightcove_stream_wrappers() {
+  return array(
+    'brightcove' => array(
+      'name' => t('Brightcove videos'),
+      'class' => 'MediaBrightcoveStreamWrapper',
+      'description' => t('Videos provided by Brightcove.'),
+      'type' => STREAM_WRAPPERS_READ_VISIBLE,
+    ),
+  );
+}
+
+/**
+ * Implements hook_theme().
+ */
+function media_brightcove_theme($existing, $type, $theme, $path) {
+  return array();
+}
+
+/**
+ * Implements hook_media_format_form_prepare_alter().
+ */
+function media_brightcove_media_format_form_prepare_alter(&$form, &$form_state, $media) {
+}
+
+/**
+ * Implements hook_ctools_plugin_api().
+ */
+function media_brightcove_ctools_plugin_api($owner, $api) {
+  static $api_versions = array(
+    'file_entity' => array(
+      'file_default_displays' => 1,
+    ),
+  );
+  if (isset($api_versions[$owner][$api])) {
+    return array('version' => $api_versions[$owner][$api]);
+  }
+}

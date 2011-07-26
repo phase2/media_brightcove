@@ -1,0 +1,10 @@
+name = Media: Brightcove
+description = Provides Brightcove support to the Media module.
+package = "Media"
+core = 7.x
+files[] = media_brightcove.module
+files[] = includes/MediaBrightcoveStreamWrapper.inc
+files[] = includes/MediaInternetBrightcoveHandler.inc
+dependencies[] = media_internet
+
+
