@@ -10,7 +10,7 @@
  *  $youtube = new ResourceBrightcoveStreamWrapper('youtube://?v=[video-code]');
  */
 class MediaBrightcoveStreamWrapper extends MediaReadOnlyStreamWrapper {
-  protected $base_url = 'http://youtube.com/watch';
+  protected $base_url = 'http://brightcove.com/watch';
 
   function getTarget($f) {
     return FALSE;
@@ -22,12 +22,12 @@ class MediaBrightcoveStreamWrapper extends MediaReadOnlyStreamWrapper {
 
   function getOriginalThumbnailPath() {
     $parts = $this->get_parameters();
-    return 'http://img.youtube.com/vi/'. check_plain($parts['v']) .'/0.jpg';
+    return 'http://img.brightcove.com/vi/'. check_plain($parts['v']) .'/0.jpg';
   }
 
   function getLocalThumbnailPath() {
     $parts = $this->get_parameters();
-    $local_path = 'public://media-youtube/' . check_plain($parts['v']) . '.jpg';
+    $local_path = 'public://media-brightcove/' . check_plain($parts['v']) . '.jpg';
     if (!file_exists($local_path)) {
       $dirname = drupal_dirname($local_path);
       file_prepare_directory($dirname, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS);

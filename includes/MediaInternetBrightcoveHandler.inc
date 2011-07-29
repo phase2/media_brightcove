@@ -5,19 +5,16 @@
  *
  * @see hook_media_internet_providers().
  */
-class MediaInternetYouTubeHandler extends MediaInternetBaseHandler {
+class MediaInternetBrightcoveHandler extends MediaInternetBaseHandler {
   public function parse($embedCode) {
+    //look for frightcove: video id
     $patterns = array(
-      '@youtube\.com/watch[#\?]v=([^"\& ]+)@i',
-      '@youtube\.com/embed/([^"\&\? ]+)@i',
-      '@youtube\.com/v/([^"\&\? ]+)@i',
-      '@youtube\.com/\?v=([^"\& ]+)@i',
-      '@youtu.be/([^"\&\? ]+)@i',
+      '@brightcove:(.*)@',
     );
     foreach ($patterns as $pattern) {
       preg_match($pattern, $embedCode, $matches);
       if (isset($matches[1])) {
-        return file_stream_wrapper_uri_normalize('youtube://v/' . $matches[1]);
+        return file_stream_wrapper_uri_normalize('brightcove://' . $matches[1]);
       }
     }
   }
@@ -82,6 +79,7 @@ class MediaInternetYouTubeHandler extends MediaInternetBaseHandler {
    *   Otherwise, NULL.
    */
   public function getOEmbed() {
+    return $this->parse($this->embedCode);
     $uri = $this->parse($this->embedCode);
     $external_url = drupal_realpath($uri);
     $oembed_url = url('http://www.youtube.com/oembed', array('query' => array('url' => $external_url, 'format' => 'json')));

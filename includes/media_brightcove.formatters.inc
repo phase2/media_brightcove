@@ -9,18 +9,16 @@
  */
 function media_brightcove_file_formatter_info() {
   $formatters['media_brightcove_video'] = array(
-    'label' => t('YouTube Video'),
+    'label' => t('Brightcove Video'),
     'file types' => array('video'),
     'default settings' => array(
-      'width' => media_brightcove_variable_get('width'),
-      'height' => media_brightcove_variable_get('height'),
-      'autoplay' => media_brightcove_variable_get('autoplay'),
+      'player' => '',
     ),
     'view callback' => 'media_brightcove_file_formatter_video_view',
     'settings callback' => 'media_brightcove_file_formatter_video_settings',
   );
   $formatters['media_brightcove_image'] = array(
-    'label' => t('YouTube Preview Image'),
+    'label' => t('Brightcove Preview Image'),
     'file types' => array('video'),
     'default settings' => array(
       'image_style' => '',
@@ -35,16 +33,19 @@ function media_brightcove_file_formatter_info() {
  * Implements hook_file_formatter_FORMATTER_view().
  */
 function media_brightcove_file_formatter_video_view($file, $display, $langcode) {
+  dpm(func_get_args());
   $scheme = file_uri_scheme($file->uri);
-  // WYSIWYG does not yet support video inside a running editor instance.
-  if ($scheme == 'youtube' && empty($file->override['wysiwyg'])) {
+  $video_id = file_uri_target($file->uri);
+  dpm($video_id);
+  if ($scheme == 'brightcove') {
+    $video = brightcove_video_load($video_id);
+    dpm($video);
     $element = array(
-      '#theme' => 'media_brightcove_video',
-      '#uri' => $file->uri,
+      '#theme' => 'brightcove_field_embed',
+      '#video_id' => $video_id,
     );
-    foreach (array('width', 'height', 'autoplay') as $setting) {
-      $element['#' . $setting] = isset($file->override[$setting]) ? $file->override[$setting] : $display['settings'][$setting];
-    }
+    drupal_add_js('http://admin.brightcove.com/js/BrightcoveExperiences.js');
+
     return $element;
   }
 }
@@ -54,20 +55,10 @@ function media_brightcove_file_formatter_video_view($file, $display, $langcode) 
  */
 function media_brightcove_file_formatter_video_settings($form, &$form_state, $settings) {
   $element = array();
-  $element['width'] = array(
-    '#title' => t('Width'),
+  $element['player'] = array(
+    '#title' => t('Player'),
     '#type' => 'textfield',
-    '#default_value' => $settings['width'],
-  );
-  $element['height'] = array(
-    '#title' => t('Height'),
-    '#type' => 'textfield',
-    '#default_value' => $settings['height'],
-  );
-  $element['autoplay'] = array(
-    '#title' => t('Autoplay'),
-    '#type' => 'checkbox',
-    '#default_value' => $settings['autoplay'],
+    '#default_value' => $settings['player'],
   );
   return $element;
 }
@@ -77,6 +68,10 @@ function media_brightcove_file_formatter_video_settings($form, &$form_state, $se
  */
 function media_brightcove_file_formatter_image_view($file, $display, $langcode) {
   $scheme = file_uri_scheme($file->uri);
+  $element = array(
+    '#markup' => "{$file->uri} in {$settings['player']}",
+  );
+  return $element;
   if ($scheme == 'youtube') {
     $wrapper = file_stream_wrapper_get_instance_by_uri($file->uri);
     $image_style = $display['settings']['image_style'];
@@ -118,6 +113,7 @@ function media_brightcove_file_formatter_image_settings($form, &$form_state, $se
  */
 function media_brightcove_file_default_displays() {
   $default_displays = array();
+  return $default_displays;
 
   // Default settings for displaying as a video.
   $default_video_settings = array(
