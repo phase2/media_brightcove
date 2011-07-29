@@ -21,7 +21,10 @@ class MediaBrightcoveStreamWrapper extends MediaReadOnlyStreamWrapper {
   }
 
   function getOriginalThumbnailPath() {
-    $parts = $this->get_parameters();
+    $params = $this->get_parameters();
+    $video = brightcove_video_load($params['v']);
+    return $video->videoStillURL;
+
     return 'http://img.brightcove.com/vi/'. check_plain($parts['v']) .'/0.jpg';
   }
 

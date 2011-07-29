@@ -14,7 +14,7 @@ class MediaInternetBrightcoveHandler extends MediaInternetBaseHandler {
     foreach ($patterns as $pattern) {
       preg_match($pattern, $embedCode, $matches);
       if (isset($matches[1])) {
-        return file_stream_wrapper_uri_normalize('brightcove://' . $matches[1]);
+        return file_stream_wrapper_uri_normalize('brightcove://v/' . $matches[1]);
       }
     }
   }

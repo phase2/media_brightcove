@@ -34,12 +34,12 @@ function media_brightcove_file_formatter_info() {
  */
 function media_brightcove_file_formatter_video_view($file, $display, $langcode) {
   $scheme = file_uri_scheme($file->uri);
-  $video_id = file_uri_target($file->uri);
   if ($scheme == 'brightcove') {
-    //$video = brightcove_video_load($video_id);
+    $wrapper = file_stream_wrapper_get_instance_by_uri($file->uri);
+    $params = $wrapper->get_parameters();
     $element = array(
       '#theme' => 'brightcove_field_embed',
-      '#video_id' => $video_id,
+      '#video_id' => $params['v'],
     );
     if ($display['settings']['player_id']) {
       $element['#player_id'] = $display['settings']['player_id'];
@@ -73,11 +73,7 @@ function media_brightcove_file_formatter_video_settings($form, &$form_state, $se
  */
 function media_brightcove_file_formatter_image_view($file, $display, $langcode) {
   $scheme = file_uri_scheme($file->uri);
-  $element = array(
-    '#markup' => "{$file->uri} in {$settings['player']}",
-  );
-  return $element;
-  if ($scheme == 'youtube') {
+  if ($scheme == 'brightcove') {
     $wrapper = file_stream_wrapper_get_instance_by_uri($file->uri);
     $image_style = $display['settings']['image_style'];
     $valid_image_styles = image_style_options(FALSE);
