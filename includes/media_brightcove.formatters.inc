@@ -33,19 +33,19 @@ function media_brightcove_file_formatter_info() {
  * Implements hook_file_formatter_FORMATTER_view().
  */
 function media_brightcove_file_formatter_video_view($file, $display, $langcode) {
-  dpm(func_get_args());
   $scheme = file_uri_scheme($file->uri);
   $video_id = file_uri_target($file->uri);
-  dpm($video_id);
   if ($scheme == 'brightcove') {
-    $video = brightcove_video_load($video_id);
-    dpm($video);
+    //$video = brightcove_video_load($video_id);
     $element = array(
       '#theme' => 'brightcove_field_embed',
       '#video_id' => $video_id,
     );
+    if ($display['settings']['player_id']) {
+      $element['#player_id'] = $display['settings']['player_id'];
+      $element['#player_key'] = $display['settings']['player_key'];
+    }
     drupal_add_js('http://admin.brightcove.com/js/BrightcoveExperiences.js');
-
     return $element;
   }
 }
@@ -55,10 +55,15 @@ function media_brightcove_file_formatter_video_view($file, $display, $langcode) 
  */
 function media_brightcove_file_formatter_video_settings($form, &$form_state, $settings) {
   $element = array();
-  $element['player'] = array(
-    '#title' => t('Player'),
+  $element['player_id'] = array(
+    '#title' => t('Player Id'),
     '#type' => 'textfield',
-    '#default_value' => $settings['player'],
+    '#default_value' => $settings['player_id'],
+  );
+  $element['player_key'] = array(
+    '#title' => t('Player Key'),
+    '#type' => 'textfield',
+    '#default_value' => $settings['player_key'],
   );
   return $element;
 }
