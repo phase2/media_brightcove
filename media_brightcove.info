@@ -6,5 +6,6 @@ files[] = media_brightcove.module
 files[] = includes/MediaBrightcoveStreamWrapper.inc
 files[] = includes/MediaInternetBrightcoveHandler.inc
 dependencies[] = media_internet
+dependencies[] = brightcove_field
 
 
